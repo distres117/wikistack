@@ -5,7 +5,7 @@ var express = require('express'),
   swig = require('swig'),
   app = express();
 
-
+require('./filters/filters')(swig);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
 app.engine('html', swig.renderFile );

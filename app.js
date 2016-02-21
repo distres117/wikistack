@@ -1,6 +1,6 @@
 var express = require('express'),
   bodyParser = require('body-parser'),
-  routes = require('./routes'),
+  wikiRoutes = require('./routes/wikiRoutes.js'),
   morgan = require('morgan'),
   swig = require('swig'),
   app = express();
@@ -16,6 +16,14 @@ app.use(bodyParser.json());
 app.use(morgan('dev'));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/public'));
-app.use(routes);
+app.use('/wiki', wikiRoutes);
+//error handling
+app.use(function(err,req,res,next){
+  if(err){
+    console.log(err);
+    res.status(500).send(err);
+  }
+
+});
 
 module.exports = app;

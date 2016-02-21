@@ -18,16 +18,50 @@ var pageSchema = new Schema({
   date: {type: Date, default: Date.now},
   status: {type:String, enum:statuses},
   author: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
+  tags: []
 });
 
 pageSchema.virtual('route').get(function(){
     return '/wiki/' + this.urlTitle;
 });
 pageSchema.pre('validate', function(next){
-  console.log(this);
         this['urlTitle'] = generateUrl(this.title);
         next();
 });
+pageSchema.pre('save', function(next){
+        this.tags = this.tags[0].split(" ");
+        next();
+});
+pageSchema.statics.findbyTag = function(tagname, cb){
+     Page.find({
+      tags: {$elemMatch : {$eq: tagname}}
+    })
+     .then(function(arr){
+        cb(arr);
+     });
+};
+
+var userSchema = new Schema({
+  name: {type: String, required: true},
+  email: {type: String, required: true, unique: true}
+});
+
+
+userSchema.statics.findOrCreate = function(username, email, cb){
+  User.findOne({name: username})
+  .then(function(user){
+      if(!user){
+        var newUser = new User({name: username, email: email});
+        newUser.save()
+        .then(function(){
+          cb(newUser);
+        });
+      }
+      else
+        cb(user);
+  })
+};
+
 
 function generateUrl(str){
   if(!str){
@@ -38,10 +72,6 @@ function generateUrl(str){
   return newString.replace(/[^\w\d\_]/g, "");
 }
 
-var userSchema = new Schema({
-  name: {type: String, required: true},
-  email: {type: String, required: true, unique: true}
-});
 
 var Page = mongoose.model('Page', pageSchema);
 var User = mongoose.model('User', userSchema);

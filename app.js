@@ -1,6 +1,7 @@
 var express = require('express'),
   bodyParser = require('body-parser'),
   wikiRoutes = require('./routes/wikiRoutes.js'),
+  usersRoutes = require('./routes/users_routes.js'),
   morgan = require('morgan'),
   swig = require('swig'),
   app = express();
@@ -17,6 +18,7 @@ app.use(morgan('dev'));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(express.static(__dirname + '/public'));
 app.use('/wiki', wikiRoutes);
+app.use('/users', usersRoutes);
 //error handling
 app.use(function(err,req,res,next){
   if(err){

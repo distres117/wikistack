@@ -14,15 +14,19 @@ router.route('/')
   })
   .post (function(req, res, next){
       // req.body.urlTitle = generateUrl(req.body.title);
-      var page = new Page(req.body);
-      page.save()
-      .then(function(){
-        res.redirect(page.route);
-        },
-          function(err){
-          if (err)
-            next(err);
+      User.findOrCreate(req.body.name, req.body.email, function(user){
+        req.body['author'] = user._id;
+        var page = new Page(req.body);
+        page.save()
+        .then(function(){
+          res.redirect(page.route);
+          },
+            function(err){
+            if (err)
+              next(err);
+          });
         });
+      
 
   });
 
@@ -40,5 +44,12 @@ router.route('/add')
         next(err);
       });
     });
+
+  router.get('/search/:tagname', function(req,res,next){
+      Page.findbyTag(req.params.tagname, function(data){
+        console.log("data is;", data);
+        res.render('index', {pages: data || []});
+      });
+  });
 
 module.exports = router;

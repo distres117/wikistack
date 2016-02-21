@@ -6,7 +6,19 @@
   <ul class="list-unstyled">
     <!-- PLACEHOLDER LIST OF PAGES -->
     {% for page in pages %}
-      <li>{{ page | pageLink}}</li>
+      <li>
+        <div>
+
+        {{ page | pageLink}}
+        {% if page.tags.length > 0%}
+          Tags:
+        {% endif %}  
+        {% for tag in page.tags %}
+        <a href="/wiki/search/{{tag}}" > {{tag}} </a>
+        {% endfor %}
+        </div>
+        
+      </li>
     {% endfor%}
   </ul>
 {% endblock %}

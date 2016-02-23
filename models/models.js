@@ -40,6 +40,12 @@ pageSchema.statics.findbyTag = function(tagname, cb){
         cb(arr);
      });
 };
+pageSchema.methods.findSimilar = function(){
+  return this.model('Page').find({
+    tags:{ $in: this.tags },
+    urlTitle: {$ne: this.urlTitle}
+    });
+};
 
 var userSchema = new Schema({
   name: {type: String, required: true},

@@ -30,8 +30,21 @@ router.route('/')
 
   });
 
+router.get('/similar/:urlTitle', function(req,res,next){
+  Page.find({urlTitle: req.params.urlTitle})
+  .then(function(page){
+    return page[0].findSimilar();
+  })
+  .then(function(pages){
+    res.render('index',  {pages: pages});
+  })
+  .catch(function(err){
+    next(err);
+  });
+});
+
 router.route('/add')
-  .get (function(req, res){
+  .get (function(req, res, next){
     res.render('addpage');
   });
 
@@ -47,7 +60,6 @@ router.route('/add')
 
   router.get('/search/:tagname', function(req,res,next){
       Page.findbyTag(req.params.tagname, function(data){
-        console.log("data is;", data);
         res.render('index', {pages: data || []});
       });
   });
